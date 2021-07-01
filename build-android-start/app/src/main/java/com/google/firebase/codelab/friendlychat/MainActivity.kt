@@ -83,8 +83,8 @@ class MainActivity : AppCompatActivity() {
         // The FirebaseRecyclerAdapter class and options come from the FirebaseUI library
         // See: https://github.com/firebase/FirebaseUI-Android
         val options = FirebaseRecyclerOptions.Builder<FriendlyMessage>()
-                .setQuery(messagesRef, FriendlyMessage::class.java)
-                .build()
+            .setQuery(messagesRef, FriendlyMessage::class.java)
+            .build()
         adapter = FriendlyMessageAdapter(options, getUserName())
         binding.progressBar.visibility = ProgressBar.INVISIBLE
         manager = LinearLayoutManager(this)
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         // Scroll down when a new message arrives
         // See MyScrollToBottomObserver for details
         adapter.registerAdapterDataObserver(
-                MyScrollToBottomObserver(binding.messageRecyclerView, adapter, manager)
+            MyScrollToBottomObserver(binding.messageRecyclerView, adapter, manager)
         )
 
         // Disable the send button when there's no text in the input field
@@ -105,10 +105,10 @@ class MainActivity : AppCompatActivity() {
         // When the send button is clicked, send a text message
         binding.sendButton.setOnClickListener {
             val friendlyMessage = FriendlyMessage(
-                    binding.messageEditText.text.toString(),
-                    getUserName(),
-                    getPhotoUrl(),
-                    null
+                binding.messageEditText.text.toString(),
+                getUserName(),
+                getPhotoUrl(),
+                null
             )
             db.reference.child(MESSAGES_CHILD).push().setValue(friendlyMessage)
             binding.messageEditText.setText("")
@@ -169,27 +169,27 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Uri: " + uri.toString())
                 val user = auth.currentUser
                 val tempMessage =
-                        FriendlyMessage(null, getUserName(), getPhotoUrl(), LOADING_IMAGE_URL)
+                    FriendlyMessage(null, getUserName(), getPhotoUrl(), LOADING_IMAGE_URL)
                 db.reference.child(MESSAGES_CHILD).push()
-                        .setValue(
-                                tempMessage,
-                                DatabaseReference.CompletionListener { databaseError, databaseReference ->
-                                    if (databaseError != null) {
-                                        Log.w(
-                                                TAG, "Unable to write message to database.",
-                                                databaseError.toException()
-                                        )
-                                        return@CompletionListener
-                                    }
+                    .setValue(
+                        tempMessage,
+                        DatabaseReference.CompletionListener { databaseError, databaseReference ->
+                            if (databaseError != null) {
+                                Log.w(
+                                    TAG, "Unable to write message to database.",
+                                          databaseError.toException()
+                                      )
+                                      return@CompletionListener
+                                  }
 
-                                    // Build a StorageReference and then upload the file
-                                    val key = databaseReference.key
-                                    val storageReference = Firebase.storage
-                                            .getReference(user!!.uid)
-                                            .child(key!!)
-                                            .child(uri!!.lastPathSegment!!)
-                                    putImageInStorage(storageReference, uri, key)
-                                })
+                                  // Build a StorageReference and then upload the file
+                                  val key = databaseReference.key
+                                  val storageReference = Firebase.storage
+                                      .getReference(user!!.uid)
+                                      .child(key!!)
+                                      .child(uri!!.lastPathSegment!!)
+                                  putImageInStorage(storageReference, uri, key)
+                              })
             }
         }
     }
@@ -197,27 +197,27 @@ class MainActivity : AppCompatActivity() {
     private fun putImageInStorage(storageReference: StorageReference, uri: Uri, key: String?) {
         // First upload the image to Cloud Storage
         storageReference.putFile(uri)
-                .addOnSuccessListener(
-                        this
-                ) { taskSnapshot -> // After the image loads, get a public downloadUrl for the image
-                    // and add it to the message.
-                    taskSnapshot.metadata!!.reference!!.downloadUrl
-                            .addOnSuccessListener { uri ->
-                                val friendlyMessage =
-                                        FriendlyMessage(null, getUserName(), getPhotoUrl(), uri.toString())
-                                db.reference
-                                        .child(MESSAGES_CHILD)
-                                        .child(key!!)
-                                        .setValue(friendlyMessage)
-                            }
-                }
-                .addOnFailureListener(this) { e ->
-                    Log.w(
-                            TAG,
-                            "Image upload task was unsuccessful.",
-                            e
-                    )
-                }
+            .addOnSuccessListener(
+                this
+            ) { taskSnapshot -> // After the image loads, get a public downloadUrl for the image
+                // and add it to the message.
+                taskSnapshot.metadata!!.reference!!.downloadUrl
+                    .addOnSuccessListener { uri ->
+                        val friendlyMessage =
+                            FriendlyMessage(null, getUserName(), getPhotoUrl(), uri.toString())
+                        db.reference
+                            .child(MESSAGES_CHILD)
+                            .child(key!!)
+                            .setValue(friendlyMessage)
+                    }
+            }
+            .addOnFailureListener(this) { e ->
+                Log.w(
+                    TAG,
+                    "Image upload task was unsuccessful.",
+                    e
+                )
+            }
     }
 
     private fun signOut() {

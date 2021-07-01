@@ -35,10 +35,10 @@ import com.google.firebase.storage.ktx.storage
 // The FirebaseRecyclerAdapter class and options come from the FirebaseUI library
 // See: https://github.com/firebase/FirebaseUI-Android
 class FriendlyMessageAdapter(
-        private val options: FirebaseRecyclerOptions<FriendlyMessage>,
-        private val currentUserName: String?
+    private val options: FirebaseRecyclerOptions<FriendlyMessage>,
+    private val currentUserName: String?
 ) :
-        FirebaseRecyclerAdapter<FriendlyMessage, ViewHolder>(options) {
+    FirebaseRecyclerAdapter<FriendlyMessage, ViewHolder>(options) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -90,7 +90,7 @@ class FriendlyMessageAdapter(
     }
 
     inner class ImageMessageViewHolder(private val binding: ImageMessageBinding) :
-            ViewHolder(binding.root) {
+        ViewHolder(binding.root) {
         fun bind(item: FriendlyMessage) {
             loadImageIntoView(binding.messageImageView, item.imageUrl!!)
 
@@ -107,19 +107,19 @@ class FriendlyMessageAdapter(
         if (url.startsWith("gs://")) {
             val storageReference = Firebase.storage.getReferenceFromUrl(url)
             storageReference.downloadUrl
-                    .addOnSuccessListener { uri ->
-                        val downloadUrl = uri.toString()
-                        Glide.with(view.context)
-                                .load(downloadUrl)
-                                .into(view)
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(
-                                TAG,
-                                "Getting download url was not successful.",
-                                e
-                        )
-                    }
+                .addOnSuccessListener { uri ->
+                    val downloadUrl = uri.toString()
+                    Glide.with(view.context)
+                        .load(downloadUrl)
+                        .into(view)
+                }
+                .addOnFailureListener { e ->
+                    Log.w(
+                        TAG,
+                        "Getting download url was not successful.",
+                        e
+                    )
+                }
         } else {
             Glide.with(view.context).load(url).into(view)
         }
